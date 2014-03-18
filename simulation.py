@@ -13,6 +13,7 @@ class Simulation:
         self.controller = controller
         self.position = self.starting_position
         self.speed = 0.0
+        self.time = 0.0
 
     def __step_simulate(self, engine_input):
         """
@@ -37,10 +38,11 @@ class Simulation:
             control = self.controller(self)
             thrust = self.__step_simulate(control)
             steps += 1
+            self.time = steps * self.delta_t
 
             if debug:
                 print ('time %f position %f speed %f thrust %f' %
-                    (steps * self.delta_t, self.position, self.speed, control))
+                    (self.time, self.position, self.speed, control))
 
         return (self.position <= 0 and self.speed < self.max_landing_speed,
             steps * self.delta_t)
