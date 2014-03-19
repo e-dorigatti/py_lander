@@ -1,9 +1,11 @@
+from time import sleep
+
 class Simulation:
     def __init__(self, controller):
         self.starting_position = 150.0
         self.max_speed = 30.0
         self.max_landing_speed = 5.0
-        self.max_engine_thrust = 125.0
+        self.max_engine_thrust = 175.0
         
         self.gravity = 9.8
         self.mass = 7.5
@@ -15,7 +17,7 @@ class Simulation:
         self.speed = 0.0
         self.time = 0.0
 
-    def __step_simulate(self, engine_input):
+    def step_simulate(self, engine_input):
         """
         Updates the lander state according to the controller's input
         """
@@ -28,7 +30,7 @@ class Simulation:
         """
         Performs the simulation using the given controller and
         returns whether the lander landed successfully on the
-        moon or crashed / flown away and the time it needed
+        moon or crashed / flown away and the time it took
         """
         steps = 0
         while (self.position > 0 and
@@ -36,13 +38,14 @@ class Simulation:
             self.speed < self.max_speed):
 
             control = self.controller(self)
-            thrust = self.__step_simulate(control)
+            self.step_simulate(control)
             steps += 1
             self.time = steps * self.delta_t
 
             if debug:
                 print ('time %f position %f speed %f thrust %f' %
                     (self.time, self.position, self.speed, control))
+                sleep(self.delta_t)
 
         return (self.position <= 0 and self.speed < self.max_landing_speed,
             steps * self.delta_t)
